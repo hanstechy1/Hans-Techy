@@ -4,7 +4,7 @@ Node.js starter bot using [Baileys](https://github.com/WhiskeySockets/Baileys). 
 
 ## Features in this starter
 
-- QR login page at `https://hans-techy-yjo2.onrender.com/qr?token=2thmCkDbUMcJrvhxWLHjbdCjdW2YWKq6'(Pairing QR)
+- QR login page at `https://hans-techy-yjo2.onrender.com/qr?token=2thmCkDbUMcJrvhxWLHjbdCjdW2YWKq6' (Pairing QR)
 - Pairing-code form at `https://hans-techy-yjo2.onrender.com/pair?token=2thmCkDbUMcJrvhxWLHjbdCjdW2YWKq6`(Pairing Number)
 - Session status at `/session?token=YOUR_ADMIN_TOKEN`
 - Health endpoint at `/health`
