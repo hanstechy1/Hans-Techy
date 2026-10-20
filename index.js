@@ -15,6 +15,8 @@ app.use(express.json({ limit: '10kb' }));
 
 const PORT = Number(process.env.PORT || 3000);
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN;
+const OWNER_NUMBER = String(process.env.OWNER_NUMBER || '').replace(/\D/g, '');
+if (!OWNER_NUMBER) console.warn('Set OWNER_NUMBER in Render environment variables (country code + number, digits only).');
 if (!ADMIN_TOKEN || ADMIN_TOKEN.length < 24) {
   console.error('Set ADMIN_TOKEN to a random secret of at least 24 characters.');
   process.exit(1);
@@ -106,11 +108,15 @@ async function startWhatsApp() {
     sock.ev.on('messages.upsert', async ({messages, type}) => {
       if (type !== 'notify') return;
       for (const m of messages) {
-        if (!m.message || m.key.fromMe || m.key.remoteJid === 'status@broadcast') continue;
+        if (!m.message || m.key.remoteJid === 'status@broadcast') continue;
         const jid = m.key.remoteJid;
         const raw = m.message.ephemeralMessage?.message || m.message.viewOnceMessage?.message || m.message.viewOnceMessageV2?.message || m.message;
         const text = String(raw.conversation || raw.extendedTextMessage?.text || raw.imageMessage?.caption || raw.videoMessage?.caption || raw.documentMessage?.caption || '').trim();
         if (!text.startsWith('.')) continue;
+        const senderJid = m.key.participant || jid;
+        const senderNumber = String(senderJid.split('@')[0] || '').replace(/\D/g, '');
+        // Commands sent from the linked WhatsApp account are treated as owner commands.
+        const isOwner = Boolean(m.key.fromMe) || Boolean(OWNER_NUMBER && senderNumber === OWNER_NUMBER);
         const [rawCommand, ...args] = text.split(/\s+/);
         const command = rawCommand.slice(1).toLowerCase();
         const argText = args.join(' ');
@@ -126,7 +132,9 @@ async function startWhatsApp() {
           } else if (command === 'verify') {
             channelConfirmedUsers.add(jid);
             reply = '✅ Uthibitisho wako umepokelewa. Bot haiwezi kuthibitisha follow moja kwa moja, kwa hiyo huu ni uthibitisho wa kujitegemea tu.\n\nTumia *.menu* kuendelea.';
-          } else if (!channelConfirmedUsers.has(jid)) {
+          } else if (!isOwner) {
+            reply = '🔒 Amri hii inaruhusiwa kwa OWNER pekee wa HANS TECHY.';
+          } else if (!channelConfirmedUsers.has(jid) && !isOwner) {
             reply = '🔒 *FOLLOW CHANNEL KABLA YA KUENDELEA*\n\nTafadhali follow ONLINE SERVICES WhatsApp Channel:\n' + channelUrl + '\n\nUkishafollow, tuma *.verify* kuendelea.\n_Notice: WhatsApp/Baileys haitoi njia ya kuverify follow moja kwa moja; mfumo huu unategemea uthibitisho wako._';
           } else switch (command) {
             case 'menu':
