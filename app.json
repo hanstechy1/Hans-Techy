@@ -1,0 +1,36 @@
+{
+  "name": "HANS TECHY WhatsApp Bot",
+  "description": "Starter WhatsApp bot using Baileys with protected QR and pairing-code login pages.",
+  "repository": "https://github.com/hanstechy1/Hans-Techy",
+  "keywords": [
+    "node",
+    "whatsapp",
+    "baileys",
+    "bot"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "env": {
+    "ADMIN_TOKEN": {
+      "description": "Secret token protecting QR, pairing-code and session routes. Use a random value of at least 24 characters.",
+      "required": true
+    },
+    "AUTH_DIR": {
+      "description": "Auth state directory. Heroku dyno filesystem is ephemeral; configure durable storage before production use.",
+      "value": "./auth_info_baileys"
+    },
+    "LOG_LEVEL": {
+      "description": "Logging level (warn, info, debug).",
+      "value": "warn"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  }
+}
