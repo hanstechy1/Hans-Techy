@@ -56,11 +56,11 @@ const pairPage = (body) => `<!doctype html><html lang="en"><head><meta charset="
 app.get('/pair', requireAdmin, (_req,res) => res.type('html').send(pairPage(`<form method="post" action="/pair"><input type="hidden" name="token" value="${escapeHtml(String(_req.query.token || ''))}"><label for="phone">PHONE NUMBER WITH COUNTRY CODE</label><input id="phone" name="phone" type="tel" inputmode="numeric" pattern="[0-9]{8,15}" required placeholder="2557XXXXXXXX" autocomplete="tel"><p class="hint">Tanzania: tumia 255 ikifuatiwa na namba yako, bila alama ya + au nafasi.</p><button type="submit">GET PAIRING CODE ↗</button></form><p class="hint" style="margin-top:18px">Kwenye WhatsApp: Linked devices → Link a device → Link with phone number instead.</p>`)));
 app.post('/pair', requireAdmin, async (req,res) => {
   const phone = String(req.body.phone || '').replace(/\D/g,'');
-  if (!/^\d{8,15}$/.test(phone)) return res.status(400).type('html').send(page('<p>Invalid phone number. Use 8–15 digits including country code, without + or spaces.</p>'));
-  if (!sock || !pairingReady) return res.status(503).type('html').send(pairPage('<div class="notice">WhatsApp bado haijawa tayari kutoa pairing code. Subiri sekunde 15–30 kisha jaribu tena.</div><p style="margin-top:18px"><a style="color:#00f5ff" href="/pair">Jaribu tena</a></p>'));
+  if (!/^\d{8,15}$/.test(phone)) return res.status(400).type('html').send(pairPage('<div class="notice">Namba si sahihi. Tumia tarakimu 8–15 pamoja na country code, bila + wala nafasi.</div>'));
+  if (!sock || !pairingReady) return res.status(503).type('html').send(pairPage('<div class="notice">WhatsApp bado haijawa tayari kutoa pairing code. Subiri sekunde 15–30 kisha fungua upya ukurasa wa pairing kwa token yako.</div>'));
   try {
     const code = await sock.requestPairingCode(phone);
-    res.type('html').send(pairPage(`<div class="notice">PAIRING CODE</div><div class="code">${escapeHtml(code)}</div><p class="hint">Kwenye simu yako: WhatsApp → Linked devices → Link a device → Link with phone number instead. Ingiza code hii haraka kabla haijaisha muda.</p><p style="margin-top:22px"><a style="color:#00f5ff" href="/pair">Tengeneza code nyingine</a></p>`));
+    res.type('html').send(pairPage(`<div class="notice">PAIRING CODE</div><div class="code">${escapeHtml(code)}</div><p class="hint">Kwenye simu yako: WhatsApp → Linked devices → Link a device → Link with phone number instead. Ingiza code hii haraka kabla haijaisha muda.</p><p class="hint">Usishiriki pairing code yako na mtu mwingine.</p>`));
   } catch (e) {
     logger.error({err:e}, 'Pairing code request failed');
     res.status(500).type('html').send(pairPage('<div class="notice">Imeshindikana kupata pairing code. Angalia Render Logs, kisha jaribu tena.</div>'));
