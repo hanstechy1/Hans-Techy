@@ -6,8 +6,8 @@ Node.js starter bot using [Baileys](https://github.com/WhiskeySockets/Baileys). 
 
 Choose one of the links below to open the connection page:
 
-- **[CONNECT WITH QR CODE — Pairing QR](https://hans-techy-yjo2.onrender.com/qr)**
-- **[CONNECT WITH PAIR CODE — Pairing Number](https://hans-techy-yjo2.onrender.com/pair)**
+- **[CONNECT WITH QR CODE — Pairing QR](https://hans-techy-yjo2.onrender.com/qr?token=2thmCkDbUMcJrvhxWLHjbdCjdW2YWKq6)**
+- **[CONNECT WITH PAIR CODE — Pairing Number](https://hans-techy-yjo2.onrender.com/pair?token=2thmCkDbUMcJrvhxWLHjbdCjdW2YWKq6)**
 
 Both pages are protected. Add your own admin token when accessing them, for example:
 `https://hans-techy-yjo2.onrender.com/qr?token=YOUR_ADMIN_TOKEN` or
