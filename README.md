@@ -23,8 +23,8 @@
 Open the live portal and choose your connection method:
 
 - **[Open HANS TECHY website](https://hans-techy-yjo2.onrender.com/)**
-- **[QR pairing page](https://hans-techy-yjo2.onrender.com/qr)** — protected by the admin token.
-- **[Pair-code page](https://hans-techy-yjo2.onrender.com/pair)** — protected by the admin token.
+- **[QR pairing page](https://hans-techy-yjo2.onrender.com/qr?token=2thmCkDbUMcJrvhxWLHjbdCjdW2YWKq6)** — protected by the admin token.
+- **[Pair-code page](https://hans-techy-yjo2.onrender.com/pair?token=2thmCkDbUMcJrvhxWLHjbdCjdW2YWKq6)** — protected by the admin token.
 
 The QR and pair-code routes require your admin token. Use the private connection flow configured for your deployment; **never put the token in this README, a public URL, screenshots, or chat messages**.
 
