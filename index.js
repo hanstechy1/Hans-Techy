@@ -79,7 +79,7 @@ async function startWhatsApp() {
   startPromise = (async () => {
     await fs.mkdir(AUTH_DIR, {recursive:true});
     const { state, saveCreds } = await useMultiFileAuthState(path.resolve(AUTH_DIR));
-    sock = makeWASocket({ auth:state, logger, printQRInTerminal:false, browser:['HANS TECHY','Chrome','1.0.0'], markOnlineOnConnect:false });
+    sock = makeWASocket({ auth:state, logger, printQRInTerminal:false, browser:['Ubuntu','Chrome','20.0.04'], markOnlineOnConnect:false });
     sock.ev.on('creds.update', saveCreds);
     sock.ev.on('connection.update', async ({connection, lastDisconnect, qr}) => {
       if (qr) {
