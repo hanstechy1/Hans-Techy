@@ -122,12 +122,12 @@ async function startWhatsApp() {
         try {
           let reply;
           if (command === 'channel') {
-            reply = '📢 *ONLINE SERVICES WHATSAPP CHANNEL*\\n\\nFollow channel yetu kwa updates na taarifa mpya:\\n' + channelUrl + '\\n\\nBaada ya kufollow, tuma *.verify* kuthibitisha kwa kujitegemea. Kumbuka: bot haiwezi kuhakiki follow moja kwa moja.';
+            reply = '📢 *ONLINE SERVICES WHATSAPP CHANNEL*\n\nFollow channel yetu kwa updates na taarifa mpya:\n' + channelUrl + '\n\nBaada ya kufollow, tuma *.verify* kuthibitisha kwa kujitegemea. Kumbuka: bot haiwezi kuhakiki follow moja kwa moja.';
           } else if (command === 'verify') {
             channelConfirmedUsers.add(jid);
-            reply = '✅ Uthibitisho wako umepokelewa. Bot haiwezi kuthibitisha follow moja kwa moja, kwa hiyo huu ni uthibitisho wa kujitegemea tu.\\n\\nTumia *.menu* kuendelea.';
+            reply = '✅ Uthibitisho wako umepokelewa. Bot haiwezi kuthibitisha follow moja kwa moja, kwa hiyo huu ni uthibitisho wa kujitegemea tu.\n\nTumia *.menu* kuendelea.';
           } else if (!channelConfirmedUsers.has(jid)) {
-            reply = '🔒 *FOLLOW CHANNEL KABLA YA KUENDELEA*\\n\\nTafadhali follow ONLINE SERVICES WhatsApp Channel:\\n' + channelUrl + '\\n\\nUkishafollow, tuma *.verify* kuendelea.\\n_Notice: WhatsApp/Baileys haitoi njia ya kuverify follow moja kwa moja; mfumo huu unategemea uthibitisho wako._';
+            reply = '🔒 *FOLLOW CHANNEL KABLA YA KUENDELEA*\n\nTafadhali follow ONLINE SERVICES WhatsApp Channel:\n' + channelUrl + '\n\nUkishafollow, tuma *.verify* kuendelea.\n_Notice: WhatsApp/Baileys haitoi njia ya kuverify follow moja kwa moja; mfumo huu unategemea uthibitisho wako._';
           } else switch (command) {
             case 'menu':
             case 'help':
