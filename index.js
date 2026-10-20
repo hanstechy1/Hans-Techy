@@ -2,7 +2,9 @@ import 'dotenv/config';
 import express from 'express';
 import QRCode from 'qrcode';
 import pino from 'pino';
-import makeWASocket, { DisconnectReason, useMultiFileAuthState } from '@whiskeysockets/baileys';
+import * as baileys from '@whiskeysockets/baileys';
+import { DisconnectReason, useMultiFileAuthState } from '@whiskeysockets/baileys';
+const makeWASocket = baileys.default?.default || baileys.default || baileys.makeWASocket;
 import path from 'node:path';
 import fs from 'node:fs/promises';
 
