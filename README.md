@@ -2,10 +2,21 @@
 
 Node.js starter bot using [Baileys](https://github.com/WhiskeySockets/Baileys). This repository currently includes protected QR/pairing pages and only a small starter command set; it does **not** implement 300+ commands.
 
+## Connect WhatsApp (QR / Pair Code)
+
+Choose one of the links below to open the connection page:
+
+- **[CONNECT WITH QR CODE — Pairing QR](https://hans-techy-yjo2.onrender.com/qr)**
+- **[CONNECT WITH PAIR CODE — Pairing Number](https://hans-techy-yjo2.onrender.com/pair)**
+
+Both pages are protected. Add your own admin token when accessing them, for example:
+`https://hans-techy-yjo2.onrender.com/qr?token=YOUR_ADMIN_TOKEN` or
+`https://hans-techy-yjo2.onrender.com/pair?token=YOUR_ADMIN_TOKEN`.
+Never publish your real admin token in this README or share it with anyone.
+
 ## Features in this starter
 
-- QR login page at `https://hans-techy-yjo2.onrender.com/qr?token=2thmCkDbUMcJrvhxWLHjbdCjdW2YWKq6' (Pairing QR)
-- Pairing-code form at `https://hans-techy-yjo2.onrender.com/pair?token=2thmCkDbUMcJrvhxWLHjbdCjdW2YWKq6`(Pairing Number)
+- Protected QR login page and pairing-code form (links above)
 - Session status at `/session?token=YOUR_ADMIN_TOKEN`
 - Health endpoint at `/health`
 - Implemented chat commands: `.menu`, `.help`, `.ping`
