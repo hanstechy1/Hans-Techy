@@ -16,6 +16,8 @@ app.use(express.json({ limit: '10kb' }));
 const PORT = Number(process.env.PORT || 3000);
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN;
 const OWNER_NUMBER = String(process.env.OWNER_NUMBER || '').replace(/\D/g, '');
+const OPENAI_API_KEY = String(process.env.OPENAI_API_KEY || '').trim();
+const OPENAI_MODEL = String(process.env.OPENAI_MODEL || 'gpt-4o-mini').trim();
 if (!OWNER_NUMBER) console.warn('Set OWNER_NUMBER in Render environment variables (country code + number, digits only).');
 if (!ADMIN_TOKEN || ADMIN_TOKEN.length < 24) {
   console.error('Set ADMIN_TOKEN to a random secret of at least 24 characters.');
@@ -132,14 +134,35 @@ async function startWhatsApp() {
           } else if (command === 'verify') {
             channelConfirmedUsers.add(jid);
             reply = '✅ Uthibitisho wako umepokelewa. Bot haiwezi kuthibitisha follow moja kwa moja, kwa hiyo huu ni uthibitisho wa kujitegemea tu.\n\nTumia *.menu* kuendelea.';
-          } else if (!isOwner) {
+          } else if (!isOwner && ['restart','addowner','delowner','eval','exec','shutdown','broadcast','kickall'].includes(command)) {
             reply = '🔒 Amri hii inaruhusiwa kwa OWNER pekee wa HANS TECHY.';
-          } else if (!channelConfirmedUsers.has(jid) && !isOwner) {
+          } else if (!isOwner && !channelConfirmedUsers.has(jid) && !['menu','help','channel','verify'].includes(command)) {
             reply = '🔒 *FOLLOW CHANNEL KABLA YA KUENDELEA*\n\nTafadhali follow ONLINE SERVICES WhatsApp Channel:\n' + channelUrl + '\n\nUkishafollow, tuma *.verify* kuendelea.\n_Notice: WhatsApp/Baileys haitoi njia ya kuverify follow moja kwa moja; mfumo huu unategemea uthibitisho wako._';
+          } else if (command === 'gpt') {
+            if (!OPENAI_API_KEY) {
+              reply = '⚠️ GPT haijawekwa bado. Mmiliki aongeze OPENAI_API_KEY kwenye Render → Environment.';
+            } else if (!argText) {
+              reply = 'Tumia: .gpt andika swali lako hapa';
+            } else {
+              const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + OPENAI_API_KEY, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ model: OPENAI_MODEL, messages: [{ role: 'system', content: 'You are HANS TECHY assistant. Answer helpfully and concisely. Reply in Swahili when the user writes in Swahili.' }, { role: 'user', content: argText.slice(0, 4000) }], max_tokens: 700 }),
+                signal: AbortSignal.timeout(45000)
+              });
+              const data = await response.json().catch(() => ({}));
+              if (!response.ok) {
+                logger.error({status: response.status, error: data.error?.message || 'OpenAI request failed'}, 'OpenAI API request failed');
+                reply = response.status === 401 ? '⚠️ OPENAI_API_KEY haikubaliki. Kagua API key kwenye Render.' : response.status === 429 ? '⏳ GPT imefikia limit au salio la API halitoshi. Kagua OpenAI billing/usage.' : '⚠️ GPT haikupatikana kwa sasa. Jaribu tena baadaye.';
+              } else {
+                reply = String(data.choices?.[0]?.message?.content || '').trim() || 'GPT haikurudisha jibu. Jaribu swali jingine.';
+                reply = '🤖 *HANS TECHY GPT*\n\n' + reply.slice(0, 3500);
+              }
+            }
           } else switch (command) {
             case 'menu':
             case 'help':
-              reply = '╭━━━〔 🤖 *HANS TECHY* 〕━━━╮\n│ ⚡ *GENERAL*\n│ .menu — Onyesha menu\n│ .help — Msaada wa commands\n│ .ping — Pima majibu ya bot\n│ .alive — Angalia kama bot iko online\n│ .uptime — Muda bot imekuwa hewani\n│\n│ 🕒 *TIME & DATE*\n│ .time — Saa ya Tanzania\n│ .date — Tarehe ya leo\n│\n│ 🛠️ *TOOLS*\n│ .echo <ujumbe> — Rudia ujumbe wako\n│ .jid — Onyesha ID ya chat\n│ .groupinfo — Taarifa za group (group pekee)\n│ .about — Kuhusu bot\n│ .channel — Follow ONLINE SERVICES\n│ .verify — Thibitisha follow (kwa kujitegemea)\n╰━━━━━━━━━━━━━━━━━━━━╯\n_Commands hizi zinapatikana kwa kuanza na nukta (.)_\n📢 Channel: https://whatsapp.com/channel/0029VbD2ScLBFLgS8duVme2i';
+              reply = '╭━━━〔 🤖 *HANS TECHY* 〕━━━╮\n│ 🤖 *AI*\n│ .gpt <swali> — Uliza GPT (OpenAI API)\n│\n│ ⚡ *GENERAL*\n│ .menu — Onyesha menu\n│ .help — Msaada wa commands\n│ .ping — Pima majibu ya bot\n│ .alive — Angalia kama bot iko online\n│ .uptime — Muda bot imekuwa hewani\n│\n│ 🕒 *TIME & DATE*\n│ .time — Saa ya Tanzania\n│ .date — Tarehe ya leo\n│\n│ 🛠️ *TOOLS*\n│ .echo <ujumbe> — Rudia ujumbe wako\n│ .jid — Onyesha ID ya chat\n│ .groupinfo — Taarifa za group (group pekee)\n│ .about — Kuhusu bot\n│ .channel — Follow ONLINE SERVICES\n│ .verify — Thibitisha follow (kwa kujitegemea)\n╰━━━━━━━━━━━━━━━━━━━━╯\n_Commands hizi zinapatikana kwa kuanza na nukta (.)_\n📢 Channel: https://whatsapp.com/channel/0029VbD2ScLBFLgS8duVme2i';
               break;
             case 'ping':
               reply = '🏓 *PONG!*\n⚡ HANS TECHY inafanya kazi.\n⏱️ Response check imefanikiwa.';
@@ -171,7 +194,7 @@ async function startWhatsApp() {
               }
               break;
             case 'about':
-              reply = '🤖 *HANS TECHY*\nWhatsApp bot inayotumia Baileys.\n⚙️ Prefix: .\n💚 Status: ONLINE\nTumia .menu kuona commands.';
+              reply = '🤖 *HANS TECHY*\nWhatsApp bot inayotumia Baileys na OpenAI GPT.\n⚙️ Prefix: .\n💚 Status: ONLINE\nTumia .menu kuona commands.';
               break;
             default:
               continue;
