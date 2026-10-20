@@ -105,10 +105,64 @@ async function startWhatsApp() {
       for (const m of messages) {
         if (!m.message || m.key.fromMe || m.key.remoteJid === 'status@broadcast') continue;
         const jid = m.key.remoteJid;
-        const text = m.message.conversation || m.message.extendedTextMessage?.text || '';
-        const command = text.trim().toLowerCase();
-        if (command === '.ping') await sock.sendMessage(jid,{text:'🏓 HANS TECHY is online!'});
-        else if (command === '.menu' || command === '.help') await sock.sendMessage(jid,{text:'🤖 *HANS TECHY MENU*\n\n.ping — check bot status\n.menu — show this menu\n.help — help\n\nThis is a starter build; more commands are not implemented yet.'});
+        const raw = m.message.ephemeralMessage?.message || m.message.viewOnceMessage?.message || m.message.viewOnceMessageV2?.message || m.message;
+        const text = String(raw.conversation || raw.extendedTextMessage?.text || raw.imageMessage?.caption || raw.videoMessage?.caption || raw.documentMessage?.caption || '').trim();
+        if (!text.startsWith('.')) continue;
+        const [rawCommand, ...args] = text.split(/\s+/);
+        const command = rawCommand.slice(1).toLowerCase();
+        const argText = args.join(' ');
+        const now = new Date();
+        const time = new Intl.DateTimeFormat('sw-TZ', {timeZone:'Africa/Dar_es_Salaam',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(now);
+        const date = new Intl.DateTimeFormat('sw-TZ', {timeZone:'Africa/Dar_es_Salaam',day:'2-digit',month:'long',year:'numeric'}).format(now);
+        const uptimeSeconds = Math.floor(process.uptime());
+        const uptime = [Math.floor(uptimeSeconds/86400)+'d',Math.floor((uptimeSeconds%86400)/3600)+'h',Math.floor((uptimeSeconds%3600)/60)+'m',(uptimeSeconds%60)+'s'].join(' ');
+        try {
+          let reply;
+          switch (command) {
+            case 'menu':
+            case 'help':
+              reply = '╭━━━〔 🤖 *HANS TECHY* 〕━━━╮\n│ ⚡ *GENERAL*\n│ .menu — Onyesha menu\n│ .help — Msaada wa commands\n│ .ping — Pima majibu ya bot\n│ .alive — Angalia kama bot iko online\n│ .uptime — Muda bot imekuwa hewani\n│\n│ 🕒 *TIME & DATE*\n│ .time — Saa ya Tanzania\n│ .date — Tarehe ya leo\n│\n│ 🛠️ *TOOLS*\n│ .echo <ujumbe> — Rudia ujumbe wako\n│ .jid — Onyesha ID ya chat\n│ .groupinfo — Taarifa za group (group pekee)\n│ .about — Kuhusu bot\n╰━━━━━━━━━━━━━━━━━━━━╯\n_Commands hizi zinapatikana kwa kuanza na nukta (.)_';
+              break;
+            case 'ping':
+              reply = '🏓 *PONG!*\n⚡ HANS TECHY inafanya kazi.\n⏱️ Response check imefanikiwa.';
+              break;
+            case 'alive':
+              reply = '🤖 *HANS TECHY iko ONLINE* ✅\n📡 WhatsApp connection: connected\n⏱️ Uptime: ' + uptime;
+              break;
+            case 'uptime':
+              reply = '⏱️ *HANS TECHY UPTIME*\n' + uptime;
+              break;
+            case 'time':
+              reply = '🕒 *Saa ya Tanzania*\n' + time + ' (EAT, UTC+3)';
+              break;
+            case 'date':
+              reply = '📅 *Tarehe ya leo*\n' + date;
+              break;
+            case 'echo':
+              reply = argText ? '💬 ' + argText.slice(0,1500) : 'Tumia: .echo ujumbe wako';
+              break;
+            case 'jid':
+              reply = '🆔 *Chat ID:*\n' + jid;
+              break;
+            case 'groupinfo':
+              if (!jid.endsWith('@g.us')) {
+                reply = 'ℹ️ Command hii inafanya kazi kwenye group la WhatsApp pekee.';
+              } else {
+                const metadata = await sock.groupMetadata(jid);
+                reply = '👥 *GROUP INFO*\n📝 Jina: ' + metadata.subject + '\n👤 Washiriki: ' + metadata.participants.length + '\n🆔 ID: ' + jid;
+              }
+              break;
+            case 'about':
+              reply = '🤖 *HANS TECHY*\nWhatsApp bot inayotumia Baileys.\n⚙️ Prefix: .\n💚 Status: ONLINE\nTumia .menu kuona commands.';
+              break;
+            default:
+              continue;
+          }
+          await sock.sendMessage(jid, {text: reply}, {quoted: m});
+        } catch (err) {
+          logger.error({err, command}, 'Command handler failed');
+          try { await sock.sendMessage(jid, {text:'Samahani, command imeshindwa. Tafadhali jaribu tena.'}, {quoted:m}); } catch {}
+        }
       }
     });
   })();
