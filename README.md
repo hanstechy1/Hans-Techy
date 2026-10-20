@@ -1,59 +1,106 @@
-# HANS TECHY WhatsApp Bot
+<!-- HANS TECHY README -->
 
-Node.js starter bot using [Baileys](https://github.com/WhiskeySockets/Baileys). This repository currently includes protected QR/pairing pages and only a small starter command set; it does **not** implement 300+ commands.
+<div align="center">
+  <img src="assets/hans-techy-logo.svg" alt="HANS TECHY logo" width="100%" />
 
-## Connect WhatsApp (QR / Pair Code)
+  <p><strong>WhatsApp automation • Pairing portal • Handy chat commands</strong></p>
 
-Choose one of the links below to open the connection page:
+  <p>
+    <a href="https://hans-techy-yjo2.onrender.com/">🌐 Live Website</a> ·
+    <a href="https://whatsapp.com/channel/0029VbD2ScLBFLgS8duVme2i">📢 ONLINE SERVICES Channel</a> ·
+    <a href="https://github.com/hanstechy1/HANS-TECHY">💻 Source Code</a>
+  </p>
+</div>
 
-- **[CONNECT WITH QR CODE — Pairing QR](https://hans-techy-yjo2.onrender.com/qr?token=2thmCkDbUMcJrvhxWLHjbdCjdW2YWKq6)**
-- **[CONNECT WITH PAIR CODE — Pairing Number](https://hans-techy-yjo2.onrender.com/pair?token=2thmCkDbUMcJrvhxWLHjbdCjdW2YWKq6)**
+---
 
-Both pages are protected. Add your own admin token when accessing them, for example:
-`https://hans-techy-yjo2.onrender.com/qr?token=YOUR_ADMIN_TOKEN` or
-`https://hans-techy-yjo2.onrender.com/pair?token=YOUR_ADMIN_TOKEN`.
-Never publish your real admin token in this README or share it with anyone.
+## ✨ About
 
-## Features in this starter
+**HANS TECHY** is a Node.js WhatsApp bot built with [Baileys](https://github.com/WhiskeySockets/Baileys). It includes a web portal for WhatsApp QR/pair-code linking and a set of chat commands.
 
-- Protected QR login page and pairing-code form (links above)
-- Session status at `/session?token=YOUR_ADMIN_TOKEN`
-- Health endpoint at `/health`
-- Implemented chat commands: `.menu`, `.help`, `.ping`
-- Heroku manifest (`app.json`) and `Procfile`
+## 🚀 Connect WhatsApp
 
-## Run locally
+Open the live portal and choose your connection method:
 
-Requires Node.js 20.
+- **[Open HANS TECHY website](https://hans-techy-yjo2.onrender.com/)**
+- **[QR pairing page](https://hans-techy-yjo2.onrender.com/qr)** — protected by the admin token.
+- **[Pair-code page](https://hans-techy-yjo2.onrender.com/pair)** — protected by the admin token.
 
-1. Clone this repository and run `npm install`.
+The QR and pair-code routes require your admin token. Use the private connection flow configured for your deployment; **never put the token in this README, a public URL, screenshots, or chat messages**.
+
+## 🧰 Commands
+
+Send these commands to the bot in WhatsApp:
+
+| Command | What it does |
+| --- | --- |
+| `.menu`, `.help` | Show the bot command menu |
+| `.ping` | Check that the bot responds |
+| `.alive` | Show online response and process uptime |
+| `.uptime` | Show process uptime |
+| `.time` | Show Tanzania time (EAT) |
+| `.date` | Show the date in Tanzania |
+| `.echo your message` | Repeat the supplied text |
+| `.jid` | Show the current chat ID |
+| `.groupinfo` | Show basic details for the current group |
+| `.about` | Show information about the bot |
+| `.channel` | Show the ONLINE SERVICES WhatsApp Channel link |
+| `.verify` | Record your self-confirmation after following the channel |
+
+### 📢 ONLINE SERVICES Channel
+
+[**Follow the ONLINE SERVICES WhatsApp Channel**](https://whatsapp.com/channel/0029VbD2ScLBFLgS8duVme2i)
+
+> **Note:** The bot cannot independently verify WhatsApp Channel follows through Baileys. The `.verify` command records a self-confirmation only; it is not proof of an actual follow. The current confirmation is held in memory and may reset when the bot restarts.
+
+## 🖥️ Run locally
+
+**Requirements:** Node.js 20 or later.
+
+1. Clone this repository and install dependencies:
+   ```bash
+   git clone https://github.com/hanstechy1/HANS-TECHY.git
+   cd HANS-TECHY
+   npm install
+   ```
 2. Copy `.env.example` to `.env`.
-3. Set `ADMIN_TOKEN` to a long random secret (at least 24 characters).
-4. Run `npm start`.
-5. Open `http://localhost:3000/qr?token=YOUR_ADMIN_TOKEN` and scan the QR, or open `/pair?token=YOUR_ADMIN_TOKEN` to request a pairing code.
+3. Set `ADMIN_TOKEN` to a strong random secret of at least 24 characters.
+4. Start the app:
+   ```bash
+   npm start
+   ```
+5. Open `http://localhost:3000` in your browser.
 
-For pairing code, enter the phone number with country code, digits only, without plus sign, spaces or hyphens. On WhatsApp, open Linked devices and choose the phone-number linking option.
+Do not commit `.env`, WhatsApp session files, QR codes, pairing codes, or admin credentials.
 
-## Heroku deploy
+## ☁️ Deployment
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://www.heroku.com/deploy?template=https://github.com/hanstechy1/Hans-Techy)
+The live service is hosted on Render:
 
-The manifest requests `ADMIN_TOKEN` during deployment. Keep it private. After deployment, use `https://YOUR-APP.herokuapp.com/qr?token=YOUR_ADMIN_TOKEN` or `/pair?token=YOUR_ADMIN_TOKEN`.
+- **Website:** https://hans-techy-yjo2.onrender.com/
+- **Health status:** https://hans-techy-yjo2.onrender.com/health
 
-## Important limitations and security
+After pushing changes to `main`, deploy the latest commit from your Render dashboard if automatic deployment is not enabled.
 
-- **Not tested end-to-end in this commit.** A successful GitHub commit does not prove WhatsApp login or Heroku deployment works. Verify deployment logs and test with a spare WhatsApp account first.
-- Baileys is an unofficial WhatsApp Web library; WhatsApp protocol changes can break connectivity.
-- This starter uses `useMultiFileAuthState` on the local filesystem. Heroku dyno files are ephemeral, so linked sessions may be lost after restarts/redeploys. Configure durable encrypted session storage before relying on a hosted production deployment.
-- The QR page, pairing page and session endpoint require the admin token. Never share the token, QR, or pairing code. Use HTTPS in hosted environments.
-- Keep `.env` and `auth_info_baileys/` out of Git. Never commit credentials.
-- Use responsibly and follow WhatsApp's terms and applicable laws.
+## 🔐 Security and limitations
 
-## Environment variables
+- Keep `ADMIN_TOKEN` secret and rotate it immediately if it has ever appeared in a public file, URL, screenshot, or chat.
+- The QR page, pair-code page, and session endpoint are protected routes. Never share pairing codes or QR codes with anyone.
+- Baileys is an unofficial WhatsApp Web library; protocol changes may affect connectivity.
+- The bot uses local filesystem session storage by default. Some hosting environments use ephemeral filesystems, so sessions may be lost after a restart or redeploy unless persistent storage is configured.
+- Test changes in a safe environment and follow WhatsApp's terms and applicable laws.
+
+## ⚙️ Environment variables
 
 | Variable | Required | Description |
-|---|---|---|
-| `ADMIN_TOKEN` | Yes | Secret protecting admin routes; minimum 24 characters |
-| `PORT` | No | HTTP port (defaults to 3000) |
-| `AUTH_DIR` | No | Auth directory (defaults to `./auth_info_baileys`) |
-| `LOG_LEVEL` | No | Pino log level (defaults to `warn`) |
+| --- | --- | --- |
+| `ADMIN_TOKEN` | Yes | Secret for protected admin routes; at least 24 characters |
+| `PORT` | No | HTTP port; defaults to `3000` |
+| `AUTH_DIR` | No | WhatsApp auth directory; defaults to `./auth_info_baileys` |
+| `LOG_LEVEL` | No | Pino log level; defaults to `warn` |
+
+---
+
+<div align="center">
+  <sub>Made with ⚡ for HANS TECHY</sub>
+</div>
