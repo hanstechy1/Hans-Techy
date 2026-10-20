@@ -29,6 +29,9 @@ let status = 'starting';
 let startPromise;
 let reconnectTimer;
 const logger = pino({ level: process.env.LOG_LEVEL || 'warn' });
+const channelUrl = 'https://whatsapp.com/channel/0029VbD2ScLBFLgS8duVme2i';
+// Baileys cannot reliably verify WhatsApp Channel follows; this is user self-confirmation only.
+const channelConfirmedUsers = new Set();
 
 function authorized(req) {
   const supplied = req.get('x-admin-token') || req.query.token || req.body?.token;
@@ -118,10 +121,17 @@ async function startWhatsApp() {
         const uptime = [Math.floor(uptimeSeconds/86400)+'d',Math.floor((uptimeSeconds%86400)/3600)+'h',Math.floor((uptimeSeconds%3600)/60)+'m',(uptimeSeconds%60)+'s'].join(' ');
         try {
           let reply;
-          switch (command) {
+          if (command === 'channel') {
+            reply = '📢 *ONLINE SERVICES WHATSAPP CHANNEL*\\n\\nFollow channel yetu kwa updates na taarifa mpya:\\n' + channelUrl + '\\n\\nBaada ya kufollow, tuma *.verify* kuthibitisha kwa kujitegemea. Kumbuka: bot haiwezi kuhakiki follow moja kwa moja.';
+          } else if (command === 'verify') {
+            channelConfirmedUsers.add(jid);
+            reply = '✅ Uthibitisho wako umepokelewa. Bot haiwezi kuthibitisha follow moja kwa moja, kwa hiyo huu ni uthibitisho wa kujitegemea tu.\\n\\nTumia *.menu* kuendelea.';
+          } else if (!channelConfirmedUsers.has(jid)) {
+            reply = '🔒 *FOLLOW CHANNEL KABLA YA KUENDELEA*\\n\\nTafadhali follow ONLINE SERVICES WhatsApp Channel:\\n' + channelUrl + '\\n\\nUkishafollow, tuma *.verify* kuendelea.\\n_Notice: WhatsApp/Baileys haitoi njia ya kuverify follow moja kwa moja; mfumo huu unategemea uthibitisho wako._';
+          } else switch (command) {
             case 'menu':
             case 'help':
-              reply = '╭━━━〔 🤖 *HANS TECHY* 〕━━━╮\n│ ⚡ *GENERAL*\n│ .menu — Onyesha menu\n│ .help — Msaada wa commands\n│ .ping — Pima majibu ya bot\n│ .alive — Angalia kama bot iko online\n│ .uptime — Muda bot imekuwa hewani\n│\n│ 🕒 *TIME & DATE*\n│ .time — Saa ya Tanzania\n│ .date — Tarehe ya leo\n│\n│ 🛠️ *TOOLS*\n│ .echo <ujumbe> — Rudia ujumbe wako\n│ .jid — Onyesha ID ya chat\n│ .groupinfo — Taarifa za group (group pekee)\n│ .about — Kuhusu bot\n╰━━━━━━━━━━━━━━━━━━━━╯\n_Commands hizi zinapatikana kwa kuanza na nukta (.)_';
+              reply = '╭━━━〔 🤖 *HANS TECHY* 〕━━━╮\n│ ⚡ *GENERAL*\n│ .menu — Onyesha menu\n│ .help — Msaada wa commands\n│ .ping — Pima majibu ya bot\n│ .alive — Angalia kama bot iko online\n│ .uptime — Muda bot imekuwa hewani\n│\n│ 🕒 *TIME & DATE*\n│ .time — Saa ya Tanzania\n│ .date — Tarehe ya leo\n│\n│ 🛠️ *TOOLS*\n│ .echo <ujumbe> — Rudia ujumbe wako\n│ .jid — Onyesha ID ya chat\n│ .groupinfo — Taarifa za group (group pekee)\n│ .about — Kuhusu bot\n│ .channel — Follow ONLINE SERVICES\n│ .verify — Thibitisha follow (kwa kujitegemea)\n╰━━━━━━━━━━━━━━━━━━━━╯\n_Commands hizi zinapatikana kwa kuanza na nukta (.)_\n📢 Channel: https://whatsapp.com/channel/0029VbD2ScLBFLgS8duVme2i';
               break;
             case 'ping':
               reply = '🏓 *PONG!*\n⚡ HANS TECHY inafanya kazi.\n⏱️ Response check imefanikiwa.';
