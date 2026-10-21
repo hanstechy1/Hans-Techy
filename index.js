@@ -162,7 +162,7 @@ async function startWhatsApp() {
           } else switch (command) {
             case 'menu':
             case 'help':
-              reply = '╭━━━〔 🤖 *HANS TECHY* 〕━━━╮\n│ 🤖 *AI*\n│ .gpt <swali> — Uliza GPT (OpenAI API)\n│\n│ ⚡ *GENERAL*\n│ .menu — Onyesha menu\n│ .help — Msaada wa commands\n│ .ping — Pima majibu ya bot\n│ .alive — Angalia kama bot iko online\n│ .uptime — Muda bot imekuwa hewani\n│\n│ 🕒 *TIME & DATE*\n│ .time — Saa ya Tanzania\n│ .date — Tarehe ya leo\n│\n│ 🛠️ *TOOLS*\n│ .echo <ujumbe> — Rudia ujumbe wako\n│ .jid — Onyesha ID ya chat\n│ .groupinfo — Taarifa za group (group pekee)\n│ .about — Kuhusu bot\n│ .channel — Follow ONLINE SERVICES\n│ .verify — Thibitisha follow (kwa kujitegemea)\n╰━━━━━━━━━━━━━━━━━━━━╯\n_Commands hizi zinapatikana kwa kuanza na nukta (.)_\n📢 Channel: https://whatsapp.com/channel/0029VbD2ScLBFLgS8duVme2i';
+              reply = '╭━━━〔 🤖 *HANS TECHY* 〕━━━╮\n│ 🤖 *AI*\n│ .gpt <swali>\n│\n│ ⚡ *GENERAL*\n│ .menu\n│ .help\n│ .ping\n│ .alive\n│ .uptime\n│\n│ 🕒 *TIME & DATE*\n│ .time\n│ .date\n│\n│ 🛠️ *TOOLS*\n│ .echo <ujumbe>\n│ .jid\n│ .groupinfo\n│ .about\n│ .channel\n│ .verify\n╰━━━━━━━━━━━━━━━━━━━━╯\n📢 Channel: https://whatsapp.com/channel/0029VbD2ScLBFLgS8duVme2i';
               break;
             case 'ping':
               reply = '🏓 *PONG!*\n⚡ HANS TECHY inafanya kazi.\n⏱️ Response check imefanikiwa.';
