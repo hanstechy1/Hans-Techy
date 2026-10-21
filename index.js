@@ -196,6 +196,71 @@ async function startWhatsApp() {
             case 'about':
               reply = '🤖 *HANS TECHY*\nWhatsApp bot powered by Baileys and OpenAI GPT.\n⚙️ Prefix: .\n💚 Status: ONLINE\nUse .menu to view commands.';
               break;
+            case 'reverse':
+              reply = argText ? argText.split('').reverse().join('').slice(0, 3000) : 'Usage: .reverse <text>';
+              break;
+            case 'upper':
+              reply = argText ? argText.toUpperCase().slice(0, 3000) : 'Usage: .upper <text>';
+              break;
+            case 'lower':
+              reply = argText ? argText.toLowerCase().slice(0, 3000) : 'Usage: .lower <text>';
+              break;
+            case 'titlecase':
+              reply = argText ? argText.toLowerCase().replace(/\b\p{L}/gu, c => c.toUpperCase()).slice(0, 3000) : 'Usage: .titlecase <text>';
+              break;
+            case 'count':
+              reply = argText ? 'Characters: ' + argText.length + '\nWords: ' + (argText.trim() ? argText.trim().split(/\s+/).length : 0) + '\nLines: ' + argText.split('\n').length : 'Usage: .count <text>';
+              break;
+            case 'trim':
+              reply = argText ? argText.replace(/\s+/g, ' ').trim().slice(0, 3000) : 'Usage: .trim <text>';
+              break;
+            case 'base64':
+              reply = argText ? Buffer.from(argText, 'utf8').toString('base64').slice(0, 3000) : 'Usage: .base64 <text>';
+              break;
+            case 'unbase64':
+              try { reply = argText ? Buffer.from(argText, 'base64').toString('utf8').slice(0, 3000) : 'Usage: .unbase64 <base64>'; }
+              catch { reply = 'Invalid Base64 input.'; }
+              break;
+            case 'urlencode':
+              reply = argText ? encodeURIComponent(argText).slice(0, 3000) : 'Usage: .urlencode <text>';
+              break;
+            case 'urldecode':
+              try { reply = argText ? decodeURIComponent(argText).slice(0, 3000) : 'Usage: .urldecode <encoded-text>'; }
+              catch { reply = 'Invalid URL-encoded input.'; }
+              break;
+            case 'password':
+              reply = 'Random password: ' + Array.from({length:20}, () => 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*'[Math.floor(Math.random()*'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*'.length)]).join('');
+              break;
+            case 'uuid':
+              reply = 'UUID: ' + crypto.randomUUID();
+              break;
+            case 'coinflip':
+              reply = 'Coin flip: ' + (Math.random() < 0.5 ? 'HEADS' : 'TAILS');
+              break;
+            case 'dice':
+              reply = 'Dice roll (1–6): ' + (1 + Math.floor(Math.random()*6));
+              break;
+            case 'choose':
+              { const choices = argText.split('|').map(x => x.trim()).filter(Boolean); reply = choices.length >= 2 ? 'Choice: ' + choices[Math.floor(Math.random()*choices.length)] : 'Usage: .choose option 1 | option 2 | option 3'; }
+              break;
+            case 'calc':
+              { const expression = argText.trim(); if (!expression || !/^[0-9+*/().%\s-]+$/.test(expression) || expression.length > 100) reply = 'Usage: .calc 12 * (4 + 3). Only basic arithmetic is supported.'; else { try { const tokens = expression.match(/\d+(?:\.\d+)?|[()+*/%-]|\s+/g) || []; if (tokens.join('').replace(/\s/g,'') !== expression.replace(/\s/g,'')) throw new Error('invalid'); const value = Function('"use strict"; return (' + expression + ')')(); reply = Number.isFinite(value) ? 'Result: ' + value : 'Invalid calculation.'; } catch { reply = 'Invalid calculation. Example: .calc 12 * (4 + 3)'; } } }
+              break;
+            case 'percent':
+              { const nums = argText.split(/\s+/).map(Number); reply = nums.length === 2 && nums.every(Number.isFinite) ? nums[1] + '% of ' + nums[0] + ' = ' + (nums[0]*nums[1]/100) : 'Usage: .percent <number> <percent>'; }
+              break;
+            case 'random':
+              { const nums = argText.split(/\s+/).map(Number); const min = nums.length > 0 && Number.isFinite(nums[0]) ? nums[0] : 1; const max = nums.length > 1 && Number.isFinite(nums[1]) ? nums[1] : 100; reply = Number.isInteger(min) && Number.isInteger(max) && max >= min && max-min <= 1000000000 ? 'Random number: ' + (min + Math.floor(Math.random()*(max-min+1))) : 'Usage: .random [minimum] [maximum]'; }
+              break;
+            case 'timestamp':
+              reply = 'Unix timestamp (seconds): ' + Math.floor(Date.now()/1000) + '\nMilliseconds: ' + Date.now();
+              break;
+            case 'emoji':
+              reply = '😀 😎 🚀 🔥 💯 🎉 ❤️ 🌍 🤖 ✨';
+              break;
+            case 'quote':
+              { const quotes = ['Great things are done by a series of small things brought together. — Vincent van Gogh','It always seems impossible until it is done. — Nelson Mandela','Success is the sum of small efforts, repeated day in and day out. — Robert Collier','Stay hungry, stay foolish. — Steve Jobs']; reply = quotes[Math.floor(Math.random()*quotes.length)]; }
+              break;
             default:
               continue;
           }
