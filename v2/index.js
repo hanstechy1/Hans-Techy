@@ -1,7 +1,8 @@
 import 'dotenv/config';
-import makeWASocket, { DisconnectReason, useMultiFileAuthState } from '@whiskeysockets/baileys';
+import * as baileys from '@whiskeysockets/baileys';
 import pino from 'pino';
-import fs from 'node:fs/promises';
+const makeWASocket = baileys.default?.default || baileys.default || baileys.makeWASocket;
+const { DisconnectReason, useMultiFileAuthState } = baileys;
 
 const OWNER_NUMBER = String(process.env.OWNER_NUMBER || '').replace(/\D/g, '');
 const OPENAI_API_KEY = String(process.env.OPENAI_API_KEY || '').trim();
